@@ -1,0 +1,184 @@
+local success, library = pcall(function()
+    return loadstring(game:HttpGet("https://raw.githubusercontent.com/liebertsx/Tora-Library/main/src/librarynew", true))()
+end)
+
+if not success then
+    warn("Failed to load Tora-Library")
+    return
+end
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local SoundService = game:GetService("SoundService")
+local Workspace = game:GetService("Workspace")
+local player = Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local hum = char:WaitForChild("Humanoid")
+local root = char:WaitForChild("HumanoidRootPart")
+
+-- Флаги и настройки
+local flags = {
+    autoSafeEnabled = false,
+    isTeleportedUp = false,
+    lastCheckTime = 0,
+    checkInterval = 0.1, -- Default check interval set to 0.1 seconds
+    entitySoundEnabled = true
+}
+
+-- Список монстров
+local entities = {
+    { name = "Rush", path = function() return Workspace:FindFirstChild("RushMoving") and Workspace.RushMoving:FindFirstChild("RushNew") end },
+    { name = "Ripper", path = function() return Workspace:FindFirstChild("Death") and Workspace.Death:FindFirstChild("Ripe") end },
+    { name = "Rebound", path = function() return Workspace:FindFirstChild("ReboundMoving") and Workspace.ReboundMoving:FindFirstChild("Rebound") end },
+    { name = "DeerGod", path = function() return Workspace:FindFirstChild("Deer God") and Workspace["Deer God"]:FindFirstChild("RushNew") end },
+    { name = "Silence", path = function() return Workspace:FindFirstChild("Silence") and Workspace.Silence:FindFirstChild("RushNew") end },
+    { name = "Ambush", path = function() return Workspace:FindFirstChild("AmbushMoving") and Workspace.AmbushMoving:FindFirstChild("RushNew") end },
+    { name = "A60Hardcore", path = function() return Workspace:FindFirstChild("A-60") and Workspace["A-60"]:FindFirstChild("RushNew") end }
+}
+
+-- Воспроизведение звука
+local function playEntitySound()
+    if not flags.entitySoundEnabled then return end
+    local sound = Instance.new("Sound")
+    sound.SoundId = "rbxassetid://73209036495953"
+    sound.Volume = 0.8
+    sound.Parent = SoundService
+    sound:Play()
+    game.Debris:AddItem(sound, 2)
+end
+
+-- Уведомление
+local function showNotification(title, message)
+    library:Notify({
+        title = title,
+        content = message,
+        duration = 5
+    })
+    playEntitySound()
+end
+
+-- Телепортация вверх и заморозка
+local function teleportUpAndFreeze()
+    if flags.isTeleportedUp then return end
+
+    local success, err = pcall(function()
+        local originalCFrame = root.CFrame
+        root.CFrame = CFrame.new(originalCFrame.Position + Vector3.new(0, 150, 0)) * CFrame.Angles(originalCFrame:ToEulerAnglesXYZ())
+        hum.WalkSpeed = 0
+        hum.JumpPower = 0
+        local bodyPosition = Instance.new("BodyPosition")
+        bodyPosition.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+        bodyPosition.Position = root.Position
+        bodyPosition.Parent = root
+        bodyPosition.Name = "AutoSafeFreeze"
+        flags.isTeleportedUp = true
+        showNotification("Auto-Safe", "Teleported up and frozen!")
+    end)
+
+    if not success then
+        warn("Error teleporting up: " .. tostring(err))
+    end
+end
+
+-- Возврат вниз
+local function teleportDown()
+    if not flags.isTeleportedUp then return end
+
+    local success, err = pcall(function()
+        local bodyPosition = root:FindFirstChild("AutoSafeFreeze")
+        if bodyPosition then
+            bodyPosition:Destroy()
+        end
+        hum.WalkSpeed = 16
+        hum.JumpPower = 7.2
+        local currentCFrame = root.CFrame
+        root.CFrame = CFrame.new(currentCFrame.Position + Vector3.new(0, -150, 0)) * CFrame.Angles(currentCFrame:ToEulerAnglesXYZ())
+        flags.isTeleportedUp = false
+        showNotification("Auto-Safe", "Returned to ground!")
+    end)
+
+    if not success then
+        warn("Error teleporting down: " .. tostring(err))
+    end
+end
+
+-- Проверка монстров
+local function checkMonsters()
+    local anyMonsterExists = false
+    for _, entity in pairs(entities) do
+        if entity.path() then
+            anyMonsterExists = true
+            break
+        end
+    end
+
+    if anyMonsterExists and flags.autoSafeEnabled then
+        teleportUpAndFreeze()
+    elseif not anyMonsterExists and flags.isTeleportedUp and flags.autoSafeEnabled then
+        teleportDown()
+    end
+end
+
+-- Создание UI
+local window = library:CreateWindow("Auto-Safe for Doors")
+local mainFolder = window:AddFolder("Auto-Safe Controls")
+
+-- Переключатель Auto-Safe
+mainFolder:AddToggle({
+    text = "Enable Auto-Safe",
+    flag = "auto_safe_toggle",
+    callback = function(value)
+        local sound = Instance.new("Sound")
+        sound.SoundId = "rbxassetid://122926057446151"
+        sound.Volume = 0.5
+        sound.Parent = SoundService
+        sound:Play()
+        game.Debris:AddItem(sound, 2)
+        flags.autoSafeEnabled = value
+        if not value and flags.isTeleportedUp then
+            teleportDown()
+        end
+        showNotification("Auto-Safe", value and "Enabled" or "Disabled")
+    end
+})
+
+-- Клавиша для переключения Auto-Safe
+mainFolder:AddBind({
+    text = "Toggle Auto-Safe",
+    key = "T",
+    hold = false,
+    callback = function()
+        flags.autoSafeEnabled = not flags.autoSafeEnabled
+        local sound = Instance.new("Sound")
+        sound.SoundId = "rbxassetid://122926057446151"
+        sound.Volume = 0.5
+        sound.Parent = SoundService
+        sound:Play()
+        game.Debris:AddItem(sound, 2)
+        if not flags.autoSafeEnabled and flags.isTeleportedUp then
+            teleportDown()
+        end
+        showNotification("Auto-Safe", flags.autoSafeEnabled and "Enabled" or "Disabled")
+    end
+})
+
+RunService.Heartbeat:Connect(function(deltaTime)
+    if not flags.autoSafeEnabled then return end
+    flags.lastCheckTime = flags.lastCheckTime + deltaTime
+    if flags.lastCheckTime >= flags.checkInterval then
+        checkMonsters()
+        flags.lastCheckTime = 0
+    end
+end)
+
+-- Обновление персонажа
+player.CharacterAdded:Connect(function(newChar)
+    char = newChar
+    hum = char:WaitForChild("Humanoid")
+    root = char:WaitForChild("HumanoidRootPart")
+    if flags.isTeleportedUp then
+        teleportUpAndFreeze()
+    end
+end)
+
+library:Init()
