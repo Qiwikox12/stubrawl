@@ -1,0 +1,70 @@
+local spawner = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Entity%20Spawner/V2/Source.lua"))()
+
+local entity = spawner.Create({
+	Entity = {
+		Name = "Whisper",
+		Asset = "rbxassetid://12872364539",
+		HeightOffset = 0
+	},
+	Lights = {
+		Flicker = {
+			Enabled = true,
+			Duration = 3
+		},
+		Shatter = true,
+		Repair = false
+	},
+	Earthquake = {
+		Enabled = false
+	},
+	CameraShake = {
+		Enabled = true,
+		Range = 50,
+		Values = {0.4, 8, 0.1, 0.3}
+	},
+	Movement = {
+		Speed = 110,
+		Delay = 2,
+		Reversed = false
+	},
+	Rebounding = {
+		Enabled = false,
+		Type = "Ambush",
+		Min = 1,
+		Max = 1,
+		Delay = 2
+	},
+	Damage = {
+		Enabled = true,
+		Range = 30,
+		Amount = 100
+	},
+	Crucifixion = {
+		Enabled = true,
+		Range = 30,
+		Resist = false,
+		Break = true
+	},
+	Death = {
+		Type = "Curious",
+		Hints = {". . .", ". . .", ". . .", "Just don't look at it...", "just...", "hide..."},
+		Cause = "Whisper"
+	}
+})
+
+entity:SetCallback("OnLookAt", function(lineOfSight)
+	local player = game.Players.LocalPlayer
+	local character = player.Character
+	if character then
+		local humanoid = character:FindFirstChild("Humanoid")
+		if humanoid then
+			if lineOfSight and humanoid.WalkSpeed > 8 then
+				humanoid.WalkSpeed = 8
+			elseif not lineOfSight and humanoid.WalkSpeed < 16 then
+				humanoid.WalkSpeed = 16
+			end
+		end
+	end
+end)
+
+entity:Run()

@@ -1,0 +1,133 @@
+local spawner = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Entity%20Spawner/V2/Source.lua"))()
+
+local entity = spawner.Create({
+	Entity = {
+		Name = "Nil",
+		Asset = "rbxassetid://11419480391",
+		HeightOffset = 0
+	},
+	Lights = {
+		Flicker = {
+			Enabled = true,
+			Duration = 60
+		},
+		Shatter = true,
+		Repair = false
+	},
+	Earthquake = {
+		Enabled = false
+	},
+	CameraShake = {
+		Enabled = true,
+		Range = 100,
+		Values = {2.5, 30, 0.1, 1}
+	},
+	Movement = {
+		Speed = 150,
+		Delay = 2,
+		Reversed = false
+	},
+	Rebounding = {
+		Enabled = false,
+		Type = "Ambush",
+		Min = 1,
+		Max = 1,
+		Delay = 2
+	},
+	Damage = {
+		Enabled = true,
+		Range = 35,
+		Amount = 1
+	},
+	Crucifixion = {
+		Enabled = true,
+		Range = 35,
+		Resist = false,
+		Break = true
+	},
+	Death = {
+		Type = nil,
+		Hints = {},
+		Cause = "nіl"
+	}
+})
+
+entity:SetCallback("OnDamagePlayer", function()
+	local player = game.Players.LocalPlayer
+	local character = player.Character
+	local playerGui = player.PlayerGui
+	local soundService = game:GetService("SoundService")
+	local guiService = game:GetService("GuiService")
+
+	if workspace:FindFirstChild("Nil") then
+		workspace.Nil:Destroy()
+	end
+
+	soundService:SetListener(Enum.ListenerType.Camera)
+	for _, sound in pairs(soundService:GetDescendants()) do
+		if sound:IsA("Sound") then
+			sound:Stop()
+			sound:Destroy()
+		end
+	end
+
+	if character then
+		local humanoid = character:FindFirstChild("Humanoid")
+		if humanoid then
+			humanoid:Destroy()
+		end
+	end
+
+	for _, gui in pairs(playerGui:GetDescendants()) do
+		if gui:IsA("ScreenGui") or gui:IsA("GuiObject") then
+			gui:Destroy()
+		end
+	end
+	guiService:ClearError()
+	playerGui:SetTopbarTransparency(1)
+	game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
+
+	local screenGui = Instance.new("ScreenGui")
+	screenGui.Parent = playerGui
+	screenGui.IgnoreGuiInset = true
+
+	local purpleFrame = Instance.new("Frame")
+	purpleFrame.Size = UDim2.new(1, 0, 1, 0)
+	purpleFrame.BackgroundColor3 = Color3.fromRGB(200, 0, 255)
+	purpleFrame.BackgroundTransparency = 0
+	purpleFrame.Parent = screenGui
+
+	local blackFrame = Instance.new("Frame")
+	blackFrame.Size = UDim2.new(1, 0, 1, 0)
+	blackFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+	blackFrame.BackgroundTransparency = 0
+	blackFrame.Parent = screenGui
+	blackFrame.Visible = false
+
+	local sound1 = Instance.new("Sound")
+	sound1.SoundId = "rbxassetid://139682941479"
+	sound1.Volume = 1.5
+	sound1.Parent = soundService
+	sound1:Play()
+
+	local sound2 = Instance.new("Sound")
+	sound2.SoundId = "rbxassetid://6314880174"
+	sound2.Volume = 1.5
+	sound2.Parent = soundService
+	sound2:Play()
+
+	for i = 1, 26 do
+		purpleFrame.Visible = not purpleFrame.Visible
+		blackFrame.Visible = not blackFrame.Visible
+		wait(0.05)
+	end
+
+	if workspace:FindFirstChild("CurrentRooms") then
+		workspace.CurrentRooms:Destroy()
+	end
+
+	playerGui:ClearAllChildren()
+	player:Kick("nіl")
+end)
+
+entity:Run()
