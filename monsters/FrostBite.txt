@@ -1,0 +1,95 @@
+    local Player = game.Players.LocalPlayer
+      local Character = Player.Character
+      local PlayerGui = Player.PlayerGui
+      local Frostbite = game:GetObjects("rbxassetid://97585092787249")[1]
+  
+      -- Settings
+  
+      local Damage = 5
+      local WaitTime = 4.500
+  
+      -- Script
+  
+      Frostbite.Parent = workspace
+      Frostbite.Part.CFrame = game.Workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].RoomEnd.CFrame
+      Frostbite.Part.Anchored = true
+      Frostbite.Part.CanCollide = false
+
+    local ModuleScripts = {
+          MainGame = require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game),
+    }
+
+    ModuleScripts.MainGame.camShaker:ShakeOnce(5, 4, 2, 5)
+
+      Frostbite.Part["Static Effect"].Volume = 1.500
+      Frostbite.Part["Static Effect"]:Play()
+      wait(WaitTime)
+    Frostbite.Part["Sound"]:Play()
+    wait(0.4)
+        Frostbite.Part["Static Effect"].Volume = 0.9
+        wait(0.1)
+        Frostbite.Part["Static Effect"].Volume = 0.8
+        wait(0.1)
+        Frostbite.Part["Static Effect"].Volume = 0.7
+        wait(0.1)
+        Frostbite.Part["Static Effect"].Volume = 0.6
+        wait(0.1)
+        Frostbite.Part["Static Effect"].Volume = 0.5
+        wait(0.1)
+        Frostbite.Part["Static Effect"].Volume = 0.4
+        wait(0.1)
+        Frostbite.Part["Static Effect"].Volume = 0.3
+        wait(0.1)
+        Frostbite.Part["Static Effect"].Volume = 0.2
+        wait(0.1)
+        Frostbite.Part["Static Effect"].Volume = 0.1
+    wait(1)
+    Frostbite.Part.AmbienceFar:Stop()
+    Frostbite.Part["Static Effect"]:Stop()
+      wait(0.100)
+      Frostbite.Part.Ambience.Volume = 2
+      Frostbite.Part.Ambience:Play()
+
+    local ModuleScripts = {
+          MainGame = require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game),
+    }
+
+    ModuleScripts.MainGame.camShaker:ShakeOnce(13, 13, 8, 5)
+  
+      Frostbite.Part.Attachment.Heylois.Enabled = true
+      Frostbite.Part.Attachment.face.Enabled = true
+      Frostbite.Part.Attachment.BlackTrail.Enabled = true
+  
+      Frostbite.Part.Part.ParticleEmitter.Enabled = true
+  
+      wait(1)
+      Character.Humanoid:TakeDamage(Damage)
+      wait(1)
+      Character.Humanoid:TakeDamage(Damage)
+      wait(1)
+      Character.Humanoid:TakeDamage(Damage)
+      wait(1)
+      Character.Humanoid:TakeDamage(Damage)
+      wait(1)
+       Character.Humanoid:TakeDamage(Damage)
+      wait(1)
+      Character.Humanoid:TakeDamage(Damage)
+  
+    local GamePlayers = game.ReplicatedStorage.GameStats
+
+    local plr = game.Players.LocalPlayer.Name
+    GamePlayers["Player_" ..plr].Total.DeathCause.Value = "Frostbite"
+
+      Frostbite.Part.Ambience:Stop()
+  
+      Frostbite.Part.Attachment.Heylois.Enabled = false
+      Frostbite.Part.Attachment.face.Enabled = false
+      Frostbite.Part.Attachment.BlackTrail.Enabled = false
+  
+      Frostbite.Part.Part.ParticleEmitter.Enabled = false
+  
+      wait(3)
+      Frostbite.Part.Anchored = false 
+      wait(4)
+      Frostbite:Destroy()
+      Character.Humanoid.Health += 15
