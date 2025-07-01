@@ -1,0 +1,339 @@
+--[[Enhanced Piggy GUI with Minimize Feature]]--
+
+local PiggyGui = Instance.new("ScreenGui")
+PiggyGui.Name = "PiggyGui"
+PiggyGui.Parent = game.CoreGui
+PiggyGui.ResetOnSpawn = false
+
+-- Main Frame
+local MainFrame = Instance.new("Frame", PiggyGui)
+MainFrame.Name = "MainFrame"
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+MainFrame.BorderSizePixel = 0
+MainFrame.Position = UDim2.new(0.5, -200, 0.5, -200)
+MainFrame.Size = UDim2.new(0, 400, 0, 450)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+-- Corner Radius
+local MainCorner = Instance.new("UICorner", MainFrame)
+MainCorner.CornerRadius = UDim.new(0, 12)
+
+-- Drop Shadow
+local Shadow = Instance.new("ImageLabel", MainFrame)
+Shadow.Name = "Shadow"
+Shadow.BackgroundTransparency = 1
+Shadow.Position = UDim2.new(0, -15, 0, -15)
+Shadow.Size = UDim2.new(1, 30, 1, 30)
+Shadow.ZIndex = -1
+Shadow.Image = "rbxasset://textures/ui/Controls/DropShadow.png"
+Shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
+Shadow.ImageTransparency = 0.5
+Shadow.ScaleType = Enum.ScaleType.Slice
+Shadow.SliceCenter = Rect.new(49, 49, 450, 450)
+
+-- Title Bar
+local TitleBar = Instance.new("Frame", MainFrame)
+TitleBar.Name = "TitleBar"
+TitleBar.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
+TitleBar.BorderSizePixel = 0
+TitleBar.Size = UDim2.new(1, 0, 0, 40)
+
+local TitleCorner = Instance.new("UICorner", TitleBar)
+TitleCorner.CornerRadius = UDim.new(0, 12)
+
+-- Title Corner Fix
+local TitleFix = Instance.new("Frame", TitleBar)
+TitleFix.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
+TitleFix.BorderSizePixel = 0
+TitleFix.Position = UDim2.new(0, 0, 0.5, 0)
+TitleFix.Size = UDim2.new(1, 0, 0.5, 0)
+
+-- Title Text
+local TitleText = Instance.new("TextLabel", TitleBar)
+TitleText.Name = "TitleText"
+TitleText.BackgroundTransparency = 1
+TitleText.Position = UDim2.new(0, 15, 0, 0)
+TitleText.Size = UDim2.new(1, -80, 1, 0)
+TitleText.Font = Enum.Font.GothamBold
+TitleText.Text = "🐷 Piggy Item Collector"
+TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleText.TextSize = 16
+TitleText.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Minimize Button
+local MinimizeBtn = Instance.new("TextButton", TitleBar)
+MinimizeBtn.Name = "MinimizeBtn"
+MinimizeBtn.BackgroundColor3 = Color3.fromRGB(255, 193, 7)
+MinimizeBtn.BorderSizePixel = 0
+MinimizeBtn.Position = UDim2.new(1, -65, 0.5, -10)
+MinimizeBtn.Size = UDim2.new(0, 20, 0, 20)
+MinimizeBtn.Font = Enum.Font.GothamBold
+MinimizeBtn.Text = "−"
+MinimizeBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+MinimizeBtn.TextSize = 14
+
+local MinimizeCorner = Instance.new("UICorner", MinimizeBtn)
+MinimizeCorner.CornerRadius = UDim.new(0, 4)
+
+-- Close Button
+local CloseBtn = Instance.new("TextButton", TitleBar)
+CloseBtn.Name = "CloseBtn"
+CloseBtn.BackgroundColor3 = Color3.fromRGB(220, 53, 69)
+CloseBtn.BorderSizePixel = 0
+CloseBtn.Position = UDim2.new(1, -35, 0.5, -10)
+CloseBtn.Size = UDim2.new(0, 20, 0, 20)
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.Text = "×"
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseBtn.TextSize = 14
+
+local CloseCorner = Instance.new("UICorner", CloseBtn)
+CloseCorner.CornerRadius = UDim.new(0, 4)
+
+-- Content Frame
+local ContentFrame = Instance.new("Frame", MainFrame)
+ContentFrame.Name = "ContentFrame"
+ContentFrame.BackgroundTransparency = 1
+ContentFrame.Position = UDim2.new(0, 0, 0, 40)
+ContentFrame.Size = UDim2.new(1, 0, 1, -40)
+
+-- Status Bar
+local StatusBar = Instance.new("Frame", ContentFrame)
+StatusBar.Name = "StatusBar"
+StatusBar.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
+StatusBar.BorderSizePixel = 0
+StatusBar.Size = UDim2.new(1, 0, 0, 35)
+
+local StatusCorner = Instance.new("UICorner", StatusBar)
+StatusCorner.CornerRadius = UDim.new(0, 8)
+
+-- Items Count
+local ItemsCount = Instance.new("TextLabel", StatusBar)
+ItemsCount.Name = "ItemsCount"
+ItemsCount.BackgroundTransparency = 1
+ItemsCount.Position = UDim2.new(0, 15, 0, 0)
+ItemsCount.Size = UDim2.new(0.5, -15, 1, 0)
+ItemsCount.Font = Enum.Font.Gotham
+ItemsCount.Text = "Items: 0"
+ItemsCount.TextColor3 = Color3.fromRGB(100, 200, 100)
+ItemsCount.TextSize = 12
+ItemsCount.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Status indicator
+local StatusIndicator = Instance.new("TextLabel", StatusBar)
+StatusIndicator.Name = "StatusIndicator"
+StatusIndicator.BackgroundTransparency = 1
+StatusIndicator.Position = UDim2.new(0.5, 5, 0, 0)
+StatusIndicator.Size = UDim2.new(0.5, -20, 1, 0)
+StatusIndicator.Font = Enum.Font.Gotham
+StatusIndicator.Text = ""
+StatusIndicator.TextColor3 = Color3.fromRGB(100, 200, 255)
+StatusIndicator.TextSize = 12
+StatusIndicator.TextXAlignment = Enum.TextXAlignment.Right
+
+-- Scrolling Frame
+local ScrollingFrame = Instance.new("ScrollingFrame", ContentFrame)
+ScrollingFrame.Name = "ScrollingFrame"
+ScrollingFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+ScrollingFrame.BorderSizePixel = 0
+ScrollingFrame.Position = UDim2.new(0, 10, 0, 45)
+ScrollingFrame.Size = UDim2.new(1, -20, 1, -55)
+ScrollingFrame.ScrollBarThickness = 8
+ScrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 120)
+
+local ScrollCorner = Instance.new("UICorner", ScrollingFrame)
+ScrollCorner.CornerRadius = UDim.new(0, 8)
+
+-- Grid Layout
+local UIGridLayout = Instance.new("UIGridLayout", ScrollingFrame)
+UIGridLayout.CellSize = UDim2.new(0, 85, 0, 85)
+UIGridLayout.CellPadding = UDim2.new(0, 8, 0, 8)
+UIGridLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+UIGridLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+-- Grid Padding
+local UIPadding = Instance.new("UIPadding", ScrollingFrame)
+UIPadding.PaddingTop = UDim.new(0, 8)
+UIPadding.PaddingBottom = UDim.new(0, 8)
+UIPadding.PaddingLeft = UDim.new(0, 8)
+UIPadding.PaddingRight = UDim.new(0, 8)
+
+-- Minimize functionality
+local isMinimized = false
+local originalSize = MainFrame.Size
+
+-- Minimized Frame
+local MinimizedFrame = Instance.new("Frame", PiggyGui)
+MinimizedFrame.Name = "MinimizedFrame"
+MinimizedFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
+MinimizedFrame.BorderSizePixel = 0
+MinimizedFrame.Position = UDim2.new(0, 20, 0, 20)
+MinimizedFrame.Size = UDim2.new(0, 200, 0, 35)
+MinimizedFrame.Active = true
+MinimizedFrame.Draggable = true
+MinimizedFrame.Visible = false
+
+local MinimizedCorner = Instance.new("UICorner", MinimizedFrame)
+MinimizedCorner.CornerRadius = UDim.new(0, 8)
+
+local MinimizedText = Instance.new("TextLabel", MinimizedFrame)
+MinimizedText.BackgroundTransparency = 1
+MinimizedText.Position = UDim2.new(0, 10, 0, 0)
+MinimizedText.Size = UDim2.new(1, -40, 1, 0)
+MinimizedText.Font = Enum.Font.Gotham
+MinimizedText.Text = "🐷 Piggy Collector"
+MinimizedText.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizedText.TextSize = 12
+MinimizedText.TextXAlignment = Enum.TextXAlignment.Left
+
+local RestoreBtn = Instance.new("TextButton", MinimizedFrame)
+RestoreBtn.BackgroundColor3 = Color3.fromRGB(40, 167, 69)
+RestoreBtn.BorderSizePixel = 0
+RestoreBtn.Position = UDim2.new(1, -25, 0.5, -8)
+RestoreBtn.Size = UDim2.new(0, 16, 0, 16)
+RestoreBtn.Font = Enum.Font.GothamBold
+RestoreBtn.Text = "+"
+RestoreBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+RestoreBtn.TextSize = 12
+
+local RestoreCorner = Instance.new("UICorner", RestoreBtn)
+RestoreCorner.CornerRadius = UDim.new(0, 3)
+
+-- Variables
+local items = {}
+
+-- Functions
+local function updateItemsCount()
+    ItemsCount.Text = "Items: " .. #items
+end
+
+local function updateStatus(text, color)
+    StatusIndicator.Text = text
+    StatusIndicator.TextColor3 = color or Color3.fromRGB(100, 200, 255)
+end
+
+local function minimize()
+    MainFrame.Visible = false
+    MinimizedFrame.Visible = true
+end
+
+local function restore()
+    MainFrame.Visible = true
+    MinimizedFrame.Visible = false
+end
+
+local function collectItem(item)
+    if item and item:findFirstChild("ClickDetector") then
+        local player = game.Players.LocalPlayer
+        if player.Character and player.Character:findFirstChild("HumanoidRootPart") then
+            updateStatus("", Color3.fromRGB(255, 200, 100))
+            local cpos = player.Character.HumanoidRootPart.CFrame
+            wait(0.05)
+            player.Character.HumanoidRootPart.CFrame = item.CFrame
+            wait(0.1)
+            fireclickdetector(item.ClickDetector)
+            wait(0.3)
+            player.Character.HumanoidRootPart.CFrame = cpos
+            updateStatus("", Color3.fromRGB(100, 200, 255))
+        end
+    end
+end
+
+local function createItemFrame(item, index)
+    local ItemFrame = Instance.new("TextButton", ScrollingFrame)
+    ItemFrame.Name = "ItemFrame_" .. index
+    ItemFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
+    ItemFrame.BorderSizePixel = 0
+    ItemFrame.LayoutOrder = index
+    ItemFrame.Text = ""
+    
+    local ItemCorner = Instance.new("UICorner", ItemFrame)
+    ItemCorner.CornerRadius = UDim.new(0, 8)
+    
+    -- Hover effect
+    local originalColor = ItemFrame.BackgroundColor3
+    ItemFrame.MouseEnter:Connect(function()
+        ItemFrame.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+    end)
+    ItemFrame.MouseLeave:Connect(function()
+        ItemFrame.BackgroundColor3 = originalColor
+    end)
+    
+    -- Viewport
+    local View = Instance.new("ViewportFrame", ItemFrame)
+    View.Name = "View"
+    View.Size = UDim2.new(1, -4, 1, -4)
+    View.Position = UDim2.new(0, 2, 0, 2)
+    View.BackgroundTransparency = 1
+    View.BorderSizePixel = 0
+    
+    local ViewCorner = Instance.new("UICorner", View)
+    ViewCorner.CornerRadius = UDim.new(0, 6)
+    
+    -- Item preview
+    local viewportclone = item:Clone()
+    viewportclone.Parent = View
+    local cam = Instance.new("Camera", View)
+    cam.CameraType = Enum.CameraType.Fixed
+    local objectPosition = item.Position
+    local cameraPosition = objectPosition + Vector3.new(0, 3, 0)
+    cam.CoordinateFrame = CFrame.new(cameraPosition, objectPosition)
+    View.CurrentCamera = cam
+    
+    -- Click handler
+    ItemFrame.MouseButton1Click:Connect(function()
+        collectItem(item)
+    end)
+    
+    return ItemFrame
+end
+
+-- Event Connections
+MinimizeBtn.MouseButton1Click:Connect(minimize)
+RestoreBtn.MouseButton1Click:Connect(restore)
+CloseBtn.MouseButton1Click:Connect(function()
+    PiggyGui:Destroy()
+end)
+
+-- Main Loop
+spawn(function()
+    while wait(1) do
+        if not PiggyGui.Parent then break end
+        
+        local descendants = workspace:GetDescendants()
+        local newItems = {}
+        
+        -- Clear old items
+        for _, child in pairs(ScrollingFrame:GetChildren()) do
+            if child:IsA("TextButton") and child.Name:find("ItemFrame_") then
+                child:Destroy()
+            end
+        end
+        
+        -- Find new items
+        for _, descendant in pairs(descendants) do
+            if descendant.Name == "ItemPickupScript" and descendant.Parent:FindFirstChild("ClickDetector") then
+                table.insert(newItems, descendant.Parent)
+            end
+        end
+        
+        items = newItems
+        updateItemsCount()
+        
+        -- Create item frames
+        for i, item in pairs(items) do
+            createItemFrame(item, i)
+        end
+        
+        -- Update canvas size
+        UIGridLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+            ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, UIGridLayout.AbsoluteContentSize.Y + 16)
+        end)
+        ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, UIGridLayout.AbsoluteContentSize.Y + 16)
+        
+        updateStatus("", Color3.fromRGB(100, 255, 100))
+        wait(0.5)
+        updateStatus("", Color3.fromRGB(100, 200, 255))
+    end
+end)
